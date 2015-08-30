@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Demonstrating Op Rabbit</title>
+</head>
+<body>
+<div>
+<h2>Installation</h2>
+
+<p>These tutorials depend on you having <code>rabbitmq-server</code> <code>v3.5.0</code> or higher installed on your computer; Also, to help you see what's happening, you'll want to install the management Web-UI plugin (standard with most distros).</p>
+
+<h3>Install RabbitMQ Server</h3>
+
+<p>See the Section "Installation Guides" on the <a href="https://www.rabbitmq.com/download.html">RabbitMQ Downloads Page</a>.</p>
+
+<h4>OS X (Homebrew)</h4>
+
+<p>The best way to install <code>rabbitmq-server</code> on OS X is with <a href="http://brew.sh/">Homebrew</a>. Once <code>Homebrew</code> is installed on your system, run the following:</p>
+
+<pre><code>brew install rabbitmq-server
+</code></pre>
+
+<p>Then, launch rabbitmq-server in a separate terminal session:</p>
+
+<pre><code>rabbitmq-server
+</code></pre>
+
+<p>If it worked, you should see this:</p>
+
+<pre><code>$ rabbitmq-server
+
+              RabbitMQ 3.5.1. Copyright (C) 2007-2014 GoPivotal, Inc.
+  ##  ##      Licensed under the MPL.  See http://www.rabbitmq.com/
+  ##  ##
+  ##########  Logs: /usr/local/var/log/rabbitmq/rabbit@localhost.log
+  ######  ##        /usr/local/var/log/rabbitmq/rabbit@localhost-sasl.log
+  ##########
+              Starting broker... completed with 10 plugins.
+</code></pre>
+
+<p>[More information])(https://www.rabbitmq.com/install-homebrew.html)</p>
+
+<h4>Windows</h4>
+
+<p>See <a href="Installing on Windows using the Installer">https://www.rabbitmq.com/install-windows.html</a></p>
+
+<h4>Linux</h4>
+
+<p>See the Section "Installation Guides" on the <a href="https://www.rabbitmq.com/download.html">RabbitMQ Downloads Page</a>.</p>
+
+<h3>Launching</h3>
+
+<p>Once you've installed and have started RabbitMQ on your local machine, you should be able to open the <a href="http://127.0.0.1:15672/">RabbitMQ Management Plugin</a>. The default password is usually <code>guest</code> / <code>guest</code>.</p>
+
+<h3>Configuration</h3>
+
+<p>Fresh installs of RabbitMQ are usually configured as follows:</p>
+
+<ul>
+<li><strong>port</strong>: <code>5762</code></li>
+<li><strong>host</strong>: <code>127.0.0.1</code></li>
+<li><strong>user</strong>: <code>guest</code></li>
+<li><strong>pass</strong>: <code>guest</code></li>
+</ul>
+
+<p>If you've customized any of this, you'll need to update your configuration in <a href="#code/src/main/resources/application.conf">application.conf</a> accordingly.</p>
+</div>
+<div>
+<h2>Hello Op-Rabbit</h2>
+
+<p>The simplest of examples is a Direct Exchange, from one publisher to one consumer.</p>
+
+<p><img src="tutorial/img/01-p-to-c.png" alt="img/01-p-to-c.png" title="" /></p>
+
+<p><a href="#code/src/main/scala/sample/op_rabbit/HelloOpRabbit.scala">HelloOpRabbit.scala</a></p>
+
+<p>The minimum steps required to do this are:</p>
+
+<ul>
+<li>Instantiate an Akka <code>ActorSystem</code>.</li>
+<li>Create a <code>RabbitControl</code> actor.</li>
+<li>Create a <code>consumer</code> (Subscription), which declares the queue to which it listens, if it doesn't already exist.</li>
+<li>Publish some messages to that <code>consumer</code>.</li>
+</ul>
+
+<h3>A few terms:</h3>
+
+<h4>RabbitControl</h4>
+
+<p>RabbitControl is the top-level management actor for <code>Op-Rabbit</code>. A few of it's responsibilities:</p>
+
+<ul>
+<li>Keep a connection to the RabbitMQ Broker; recover topology after disconnect / reconnect.</li>
+<li>Ensure that every active consumer has a channel.</li>
+<li>Send message</li>
+<li>Manage and supervise all active consumers.</li>
+</ul>
+
+<h4>Subscription</h4>
+
+<p>In <code>Op-Rabbit</code>, a subscription is a declarative configuration for a consumer. It's responsible for:</p>
+
+<ul>
+<li>Defining how a channel is configured (qos).</li>
+<li>How a queue is to be declared and configured.</li>
+<li>How messages are to be processed when received.</li>
+</ul>
+
+<h4>QoS</h4>
+
+<p>QoS stands for "Quality of Service" and represents the number of concurrent messages delivered to a consumer at any given time. This is a good way to limit the number of concurrent tasks your consumer will perform, however, this limit only applies per-consumer.</p>
+
+<p>In <code>Op-Rabbit</code>, all consumers explicitly acknowledge. (If performance is a concern, you can access a channel directly and manually set up your own consumer where needed).</p>
+
+<h3>Code / Run</h3>
+
+<ul>
+<li>Sample code: <a href="#code/src/main/scala/sample/op_rabbit/HelloOpRabbit.scala">HelloOpRabbit.scala</a></li>
+<li>Configuration: <a href="#code/src/main/resources/application.conf">application.conf</a></li>
+<li>Run: Go to the <a href="#run">Run</a>, select the <code>sample.op_rabbit.HelloOpRabbit</code> class in the 'Main file' menu, and click the 'Run' button.</li>
+</ul>
+</div>
+<div>
+<h2>Very tutor</h2>
+
+<p>Wow</p>
+</div>
+</body>
+</html>
